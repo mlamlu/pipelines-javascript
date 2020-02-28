@@ -20,13 +20,27 @@ steps:
     npm run build
   displayName: 'npm install and build'
 
-- script: mocha test --reporter mocha-junit-reporter
+# - script: mocha test --reporter mocha-junit-reporter
+
+# - task: PublishTestResults@2
+#   condition: succeededOrFailed()
+#   inputs:
+#     testRunner: JUnit
+#     testResultsFiles: '**/TEST-RESULTS.xml'
+
+# - task: PublishCodeCoverageResults@1
+#   inputs: 
+#     codeCoverageTool: Cobertura
+#     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
+#     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
+
+
+- script: gulp                       #
 
 - task: PublishTestResults@2
-  condition: succeededOrFailed()
   inputs:
-    testRunner: JUnit
     testResultsFiles: '**/TEST-RESULTS.xml'
+    testRunTitle: 'Test results for JavaScript using gulp'
 
 - task: PublishCodeCoverageResults@1
   inputs: 
@@ -34,16 +48,17 @@ steps:
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
 
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)'
 
-# - script: gulp                       #
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)'
+    Contents: |
+      **\*.js
+      package.json
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-# - task: PublishTestResults@2
-#   inputs:
-#     testResultsFiles: '**/TEST-RESULTS.xml'
-#     testRunTitle: 'Test results for JavaScript using gulp'
+- task: PublishBuildArtifacts@1
 
-# - task: PublishCodeCoverageResults@1
-#   inputs: 
-#     codeCoverageTool: Cobertura
-#     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/*coverage.xml'
-#     reportDirectory: '$(System.DefaultWorkingDirectory)/**/coverage'
